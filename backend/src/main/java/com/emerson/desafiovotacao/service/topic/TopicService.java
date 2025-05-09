@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.emerson.desafiovotacao.domain.topic.Topic;
 import com.emerson.desafiovotacao.exception.http.ConflictException;
-import com.emerson.desafiovotacao.exception.http.NotFoundException;
+import com.emerson.desafiovotacao.exception.http.NotFoundTopicVotingSessionByIdException;
 import com.emerson.desafiovotacao.repository.topic.TopicRepository;
 import com.emerson.desafiovotacao.service.topic.dto.TopicDto;
 
@@ -21,7 +21,7 @@ public class TopicService {
 	
 	public Topic get(UUID uuid) {
 		return this.repository.findById(uuid)
-							.orElseThrow(() -> new NotFoundException("pauta", uuid.toString()));
+								.orElseThrow(() -> new NotFoundTopicVotingSessionByIdException());
 	}
 	
 	public Topic create(TopicDto topicDto) {

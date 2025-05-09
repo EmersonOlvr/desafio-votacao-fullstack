@@ -14,7 +14,7 @@ public record TopicVoteResultsDto(
 		long againstVotes,
 		Result currentResult,
 		Result finalResult,
-		String currentTesultText,
+		String currentResultText,
 		String finalResultText
 ) {
 

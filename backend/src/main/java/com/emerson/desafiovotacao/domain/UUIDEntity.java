@@ -26,10 +26,10 @@ public abstract class UUIDEntity implements Serializable {
 	protected UUID uuid;
 	
 	@PrePersist
-    private void ensureUuid() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
-    }
+	private void ensureUuid() {
+		if (uuid == null) {
+			uuid = UUID.randomUUID();
+		}
+	}
 
 }
