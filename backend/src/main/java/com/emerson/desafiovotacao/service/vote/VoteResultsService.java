@@ -18,6 +18,12 @@ import com.emerson.desafiovotacao.service.vote.dto.TopicVotingSessionStatus;
 import com.emerson.desafiovotacao.service.vote.dto.TopicVotingSessionVotesDto;
 import com.emerson.desafiovotacao.service.vote.dto.VoteDto;
 
+/**
+ * Serviço responsável por calcular e fornecer os resultados de votos das sessões de votação de uma pauta.
+ * Inclui métodos para retornar os resultados de uma pauta específica, considerando todas as sessões de votação associadas.
+ * 
+ * @author Emerson Oliveira
+ */
 @Service
 public class VoteResultsService {
 	
@@ -30,6 +36,15 @@ public class VoteResultsService {
 	@Autowired
 	private TopicService topicService;
 	
+	/**
+	 * Obtém os resultados de votos de uma pauta específica identificada pelo UUID.
+	 * 
+	 * Este método calcula o total de votos favoráveis e contrários em todas as sessões de votação associadas à pauta.
+	 * Ele também gera o texto do resultado atual e final, levando em consideração se há sessões de votação em andamento.
+	 * 
+	 * @param topicUuid O identificador único da pauta para a qual os resultados de votação serão retornados.
+	 * @return Um DTO contendo os resultados de votação da pauta.
+	 */
 	public TopicVoteResultsDto getResultsByTopicUuid(UUID topicUuid) {
 		Topic topic = this.topicService.get(topicUuid);
 		

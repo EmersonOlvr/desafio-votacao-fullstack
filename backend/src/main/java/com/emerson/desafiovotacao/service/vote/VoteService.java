@@ -14,6 +14,12 @@ import com.emerson.desafiovotacao.exception.http.NotFoundTopicVotingSessionByTop
 import com.emerson.desafiovotacao.repository.topic.TopicVotingSessionRepository;
 import com.emerson.desafiovotacao.repository.vote.VoteRepository;
 
+/**
+ * Serviço responsável pela gestão dos votos nas sessões de votação das pautas.
+ * Contém métodos para registrar votos de associados em pautas específicas.
+ * 
+ * @author Emerson Oliveira
+ */
 @Service
 public class VoteService {
 	
@@ -23,6 +29,18 @@ public class VoteService {
 	@Autowired
 	private TopicVotingSessionRepository votingSessionRepository;
 
+	/**
+	 * Registra um voto para uma pauta identificada pelo UUID.
+	 * 
+	 * Verifica se existe uma sessão de votação em andamento para a pauta e, caso exista,
+	 * registra o voto do associado identificado pelo CPF.
+	 * 
+	 * @param topicUuid O identificador único da pauta para a qual o voto será registrado.
+	 * @param cpf O CPF do associado que está votando.
+	 * @param vote O valor do voto (true para sim, false para não).
+	 * @throws NotFoundTopicVotingSessionByTopicException Caso não exista uma sessão de votação em andamento para a pauta.
+	 * @throws ConflictException Caso o associado já tenha votado na pauta.
+	 */
 	public void voteByTopicUuid(UUID topicUuid, String cpf, boolean vote) {
 		Instant now = Instant.now();
 		TopicVotingSession topicVotingSession = this.votingSessionRepository.findTopByTopicUuidAndEndTimeGreaterThanOrderByStartTimeDesc(topicUuid, now)
@@ -31,6 +49,18 @@ public class VoteService {
 		this.vote(topicVotingSession, cpf, vote);
 	}
 
+	/**
+	 * Registra um voto para uma sessão de votação identificada pelo UUID da sessão.
+	 * 
+	 * Verifica se existe uma sessão de votação em andamento e, caso exista,
+	 * registra o voto do associado identificado pelo CPF.
+	 * 
+	 * @param topicVotingSessionUuid O identificador único da sessão de votação para a qual o voto será registrado.
+	 * @param cpf O CPF do associado que está votando.
+	 * @param vote O valor do voto (true para sim, false para não).
+	 * @throws NotFoundTopicVotingSessionByIdException Caso não exista uma sessão de votação em andamento para o UUID informado.
+	 * @throws ConflictException Caso o associado já tenha votado na sessão de votação.
+	 */
 	public void voteByVotingSessionUuid(UUID topicVotingSessionUuid, String cpf, Boolean vote) {
 		Instant now = Instant.now();
 		TopicVotingSession topicVotingSession = this.votingSessionRepository.findByUuidAndEndTimeGreaterThan(topicVotingSessionUuid, now)
@@ -39,6 +69,18 @@ public class VoteService {
 		this.vote(topicVotingSession, cpf, vote);
 	}
 	
+	/**
+	 * Registra o voto de um associado em uma sessão de votação.
+	 * 
+	 * Verifica se o associado já votou na pauta antes de permitir o registro do voto.
+	 * Caso o associado não tenha votado, o voto é registrado no banco de dados.
+	 * 
+	 * @param topicVotingSession A sessão de votação na qual o voto será registrado.
+	 * @param cpf O CPF do associado que está votando.
+	 * @param vote O valor do voto (true para sim, false para não).
+	 * @return O voto registrado no banco de dados.
+	 * @throws ConflictException Caso o associado já tenha votado nesta pauta.
+	 */
 	private Vote vote(TopicVotingSession topicVotingSession, String cpf, boolean vote) {
 		if (this.repository.existsByTopicVotingSessionTopicUuidAndCpf(topicVotingSession.getTopic().getUuid(), cpf))
 			throw new ConflictException("O associado já votou nesta pauta. Só é permitido votar uma vez por pauta.");
