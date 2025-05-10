@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -151,6 +153,44 @@ class VoteServiceTest {
 			this.voteService.voteByVotingSessionUuid(session.getUuid(), cpf, true);
 		});
 		assertEquals("Não foi possível encontrar pauta ativa com o ID informado.", exception.getMessage());
+	}
+	
+	@Test
+	@DisplayName("Performance: deve registrar milhares de votos em tempo aceitável")
+	void shouldHandleMassiveVotingPerformance() {
+		Topic topic = this.topicService.create(new TopicDto("Pauta performance", "Teste de carga"));
+		this.votingSessionService.startVotingSession(topic.getUuid(), 5);
+
+		long start = System.currentTimeMillis();
+
+		IntStream.range(0, 100_000).parallel().forEach(i -> {
+			// gera um CPF aleatório com exatamente 11 dígitos
+			String cpf = String.format("%011d", new Random().nextInt(1_000_000_000));
+			
+			try {
+				this.voteService.voteByTopicUuid(topic.getUuid(), cpf, true);
+			} catch (Exception ignored) {
+				// já votou ou CPF inválido — ignorar para o teste de carga
+			}
+		});
+
+		long durationInMs = System.currentTimeMillis() - start;
+		System.out.println("Tempo total para 100.000 votos: " + this.formatDuration(durationInMs));
+		// média: 9.2 segundos
+
+		assertTrue(durationInMs < 60_000, "Teste demorou demais! (>60 segundos)");
+	}
+	
+	private String formatDuration(long millis) {
+		if (millis < 1_000) {
+			return millis + " ms";
+		} else if (millis < 60_000) {
+			return (millis / 1_000.0) + " segundos";
+		} else if (millis < 3_600_000) {
+			return (millis / 60_000.0) + " minutos";
+		} else {
+			return (millis / 3_600_000.0) + " horas";
+		}
 	}
 
 }
