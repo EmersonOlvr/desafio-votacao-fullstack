@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.emerson.desafiovotacao.domain.topic.Topic;
 import com.emerson.desafiovotacao.exception.http.ConflictException;
-import com.emerson.desafiovotacao.exception.http.NotFoundTopicVotingSessionByIdException;
+import com.emerson.desafiovotacao.exception.http.TopicVotingSessionNotFoundByIdException;
 import com.emerson.desafiovotacao.repository.topic.TopicRepository;
 import com.emerson.desafiovotacao.service.topic.dto.TopicDto;
 
@@ -30,11 +30,11 @@ public class TopicService {
 	 * 
 	 * @param uuid O identificador único da pauta a ser obtida.
 	 * @return A pauta encontrada, se existir.
-	 * @throws NotFoundTopicVotingSessionByIdException Caso a pauta não seja encontrada.
+	 * @throws TopicVotingSessionNotFoundByIdException Caso a pauta não seja encontrada.
 	 */
 	public Topic get(UUID uuid) {
 		return this.repository.findById(uuid)
-								.orElseThrow(() -> new NotFoundTopicVotingSessionByIdException());
+								.orElseThrow(() -> new TopicVotingSessionNotFoundByIdException());
 	}
 	
 	/**

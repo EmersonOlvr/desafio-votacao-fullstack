@@ -17,7 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.emerson.desafiovotacao.domain.topic.Topic;
 import com.emerson.desafiovotacao.exception.http.ConflictException;
-import com.emerson.desafiovotacao.exception.http.NotFoundTopicVotingSessionByIdException;
+import com.emerson.desafiovotacao.exception.http.TopicVotingSessionNotFoundByIdException;
 import com.emerson.desafiovotacao.repository.topic.TopicRepository;
 import com.emerson.desafiovotacao.service.topic.dto.TopicDto;
 
@@ -51,7 +51,7 @@ class TopicServiceTest {
 	void shouldThrowNotFoundExceptionWhenIdDoesNotExist() {
 		UUID id = UUID.randomUUID();
 
-		NotFoundTopicVotingSessionByIdException exception = assertThrows(NotFoundTopicVotingSessionByIdException.class, () -> service.get(id));
+		TopicVotingSessionNotFoundByIdException exception = assertThrows(TopicVotingSessionNotFoundByIdException.class, () -> service.get(id));
 		assertEquals("Não foi possível encontrar pauta ativa com o ID informado.", exception.getMessage());
 	}
 

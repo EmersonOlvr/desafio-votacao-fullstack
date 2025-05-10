@@ -10,16 +10,25 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.emerson.desafiovotacao.domain.topic.Topic;
 import com.emerson.desafiovotacao.domain.topic.TopicVotingSession;
 import com.emerson.desafiovotacao.domain.vote.Vote;
 import com.emerson.desafiovotacao.exception.http.ConflictException;
-import com.emerson.desafiovotacao.exception.http.NotFoundTopicVotingSessionByIdException;
-import com.emerson.desafiovotacao.exception.http.NotFoundTopicVotingSessionByTopicException;
+import com.emerson.desafiovotacao.exception.http.TopicVotingSessionNotFoundByIdException;
+import com.emerson.desafiovotacao.exception.http.TopicVotingSessionNotFoundByTopicException;
+import com.emerson.desafiovotacao.external.CpfValidationClient;
+import com.emerson.desafiovotacao.external.CpfValidationResponse;
+import com.emerson.desafiovotacao.external.VoteEligibilityStatus;
 import com.emerson.desafiovotacao.repository.topic.TopicVotingSessionRepository;
 import com.emerson.desafiovotacao.repository.vote.VoteRepository;
 import com.emerson.desafiovotacao.service.topic.TopicService;
@@ -30,6 +39,7 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 @Transactional
 class VoteServiceTest {
 
@@ -48,13 +58,30 @@ class VoteServiceTest {
 	@Autowired
 	private TopicVotingSessionRepository votingSessionRepository;
 
+	@TestConfiguration
+	static class MockCpfValidationClientConfig {
+
+		@Bean
+		@Primary
+		CpfValidationClient cpfValidationClient() {
+			// retorna um mock do cliente
+			CpfValidationClient mock = Mockito.mock(CpfValidationClient.class);
+			
+			// define o comportamento padrão para qualquer CPF
+			Mockito.when(mock.validateCpf(Mockito.anyString()))
+				   .thenReturn(new CpfValidationResponse(VoteEligibilityStatus.ABLE_TO_VOTE));
+			
+			return mock;
+		}
+	}
+
 	@Test
 	@DisplayName("Deve registrar um voto com sucesso usando o ID da pauta")
 	void shouldVoteSuccessfullyByTopicUuid() {
 		Topic topic = this.topicService.create(new TopicDto("Pauta Votação", "Descrição da pauta"));
 		this.votingSessionService.startVotingSession(topic.getUuid(), 5);
 
-		String cpf = "12345678900";
+		String cpf = "16643151015";
 		this.voteService.voteByTopicUuid(topic.getUuid(), cpf, true);
 
 		Optional<Vote> savedVote = this.voteRepository.findByTopicVotingSessionTopicUuidAndCpf(topic.getUuid(), cpf);
@@ -67,9 +94,9 @@ class VoteServiceTest {
 	void shouldThrowIfTopicHasNoActiveSession() {
 		Topic topic = this.topicService.create(new TopicDto("Pauta sem sessão", "Descrição da pauta"));
 
-		String cpf = "12345678901";
+		String cpf = "96889461096";
 
-		NotFoundTopicVotingSessionByTopicException exception = assertThrows(NotFoundTopicVotingSessionByTopicException.class, () -> {
+		TopicVotingSessionNotFoundByTopicException exception = assertThrows(TopicVotingSessionNotFoundByTopicException.class, () -> {
 			this.voteService.voteByTopicUuid(topic.getUuid(), cpf, false);
 		});
 		assertEquals("Não existe nenhuma sessão de votação em aberto para o tópico informado.", exception.getMessage());
@@ -82,7 +109,7 @@ class VoteServiceTest {
 		TopicVotingSession session = this.votingSessionService.startVotingSession(topic.getUuid(), 5);
 
 		// vota a primeira vez
-		String cpf = "12345678902";
+		String cpf = "28682801027";
 		this.voteService.voteByVotingSessionUuid(session.getUuid(), cpf, false);
 
 		// certifica-se que não deixará votar novamente
@@ -96,7 +123,7 @@ class VoteServiceTest {
 		Topic topic = this.topicService.create(new TopicDto("Outra Pauta", "Descrição da pauta"));
 		TopicVotingSession session = this.votingSessionService.startVotingSession(topic.getUuid(), 5);
 
-		String cpf = "12345678903";
+		String cpf = "55252488088";
 		this.voteService.voteByVotingSessionUuid(session.getUuid(), cpf, false);
 
 		Optional<Vote> savedVote = this.voteRepository.findByTopicVotingSessionTopicUuidAndCpf(topic.getUuid(), cpf);
@@ -118,9 +145,9 @@ class VoteServiceTest {
 						.build()
 		);
 
-		String cpf = "12345678904";
+		String cpf = "50882863096";
 		
-		NotFoundTopicVotingSessionByIdException exception = assertThrows(NotFoundTopicVotingSessionByIdException.class, () -> {
+		TopicVotingSessionNotFoundByIdException exception = assertThrows(TopicVotingSessionNotFoundByIdException.class, () -> {
 			this.voteService.voteByVotingSessionUuid(session.getUuid(), cpf, true);
 		});
 		assertEquals("Não foi possível encontrar pauta ativa com o ID informado.", exception.getMessage());

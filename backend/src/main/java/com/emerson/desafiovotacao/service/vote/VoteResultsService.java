@@ -18,6 +18,8 @@ import com.emerson.desafiovotacao.service.vote.dto.TopicVotingSessionStatus;
 import com.emerson.desafiovotacao.service.vote.dto.TopicVotingSessionVotesDto;
 import com.emerson.desafiovotacao.service.vote.dto.VoteDto;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Serviço responsável por calcular e fornecer os resultados de votos das sessões de votação de uma pauta.
  * Inclui métodos para retornar os resultados de uma pauta específica, considerando todas as sessões de votação associadas.
@@ -25,6 +27,7 @@ import com.emerson.desafiovotacao.service.vote.dto.VoteDto;
  * @author Emerson Oliveira
  */
 @Service
+@Slf4j
 public class VoteResultsService {
 	
 	@Autowired
@@ -48,7 +51,9 @@ public class VoteResultsService {
 	public TopicVoteResultsDto getResultsByTopicUuid(UUID topicUuid) {
 		Topic topic = this.topicService.get(topicUuid);
 		
+		log.info(String.format("Obtendo votos da pauta \"%s\"...", topic.getTitle()));
 		List<Vote> votesDb = this.voteRepository.findByTopicVotingSessionTopicUuid(topicUuid);
+		log.info(String.format("%s votos obtidos da pauta \"%s\".", votesDb.size(), topic.getTitle()));
 		
 		Instant now = Instant.now();
 		List<TopicVotingSessionVotesDto> votingSessionsVotes = this.votingSessionRepository.findByTopicUuid(topicUuid)

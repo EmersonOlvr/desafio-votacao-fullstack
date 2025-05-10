@@ -48,6 +48,14 @@ public class VoteController {
 			)
 		),
 		@ApiResponse(
+			responseCode = "400", 
+			description = "CPF inaptivo para votação",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = ValidationHandler.ErrorResponse.class)
+			)
+		),
+		@ApiResponse(
 			responseCode = "409", 
 			description = "Associado já votou nesta pauta",
 			content = @Content(
@@ -72,6 +80,14 @@ public class VoteController {
 		@ApiResponse(
 			responseCode = "404", 
 			description = "Sessão de votação não encontrada",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = ValidationHandler.ErrorResponse.class)
+			)
+		),
+		@ApiResponse(
+			responseCode = "400", 
+			description = "CPF inaptivo para votação",
 			content = @Content(
 				mediaType = "application/json",
 				schema = @Schema(implementation = ValidationHandler.ErrorResponse.class)
