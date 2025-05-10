@@ -3,8 +3,10 @@ package com.emerson.desafiovotacao.web.topic;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +20,7 @@ import com.emerson.desafiovotacao.exception.ValidationHandler;
 import com.emerson.desafiovotacao.service.topic.TopicService;
 import com.emerson.desafiovotacao.service.topic.TopicVotingSessionService;
 import com.emerson.desafiovotacao.service.topic.dto.TopicDto;
+import com.emerson.desafiovotacao.service.topic.dto.TopicWithOpenSessionDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping("/api/v1/topic")
@@ -38,6 +42,17 @@ public class TopicController {
 	
 	@Autowired
 	private TopicVotingSessionService topicVotingSessionService;
+	
+	@GetMapping("/list")
+	@Operation(summary = "Lista as pautas existentes")
+	public Page<TopicWithOpenSessionDto> list(
+									@RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "Informe um valor maior ou igual a 1") Integer page,
+									@RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "Informe um valor maior ou igual a 1") Integer size,
+									@RequestParam(required = false, defaultValue = "createdAt") String orderBy,
+									@RequestParam(required = false, defaultValue = "desc") String order) 
+	{
+		return this.service.list(page, size, order, orderBy);
+	}
 	
 	@PostMapping
 	@Operation(summary = "Cria uma nova pauta")

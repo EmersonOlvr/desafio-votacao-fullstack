@@ -36,7 +36,7 @@ public class VoteController {
 	private VoteResultsService voteResultsService;
 	
 	@PostMapping("/topic/{topicUuid}")
-	@Operation(summary = "Votar em uma pauta usando o ID da pauta")
+	@Operation(summary = "Vota em uma pauta usando o ID da pauta")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "204", description = "Voto registrado com sucesso", content = @Content),
 		@ApiResponse(
@@ -74,7 +74,7 @@ public class VoteController {
 	}
 	
 	@PostMapping("/votingSession/{topicVotingSessionUuid}")
-	@Operation(summary = "Votar usando o UUID da sessão de votação")
+	@Operation(summary = "Vota em uma pauta usando o ID da sessão de votação")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "204", description = "Voto registrado com sucesso", content = @Content),
 		@ApiResponse(

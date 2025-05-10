@@ -4,6 +4,8 @@ import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
+import com.emerson.desafiovotacao.exception.http.BadRequestException;
+
 import br.com.caelum.stella.validation.CPFValidator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +35,11 @@ public class CpfValidationClient {
 	public CpfValidationResponse validateCpf(String cpf) {
 		// validação da estrutura do CPF
 		CPFValidator cpfValidator = new CPFValidator();
-		cpfValidator.assertValid(cpf);
+		try {
+			cpfValidator.assertValid(cpf);
+		} catch (Exception e) {
+			throw new BadRequestException("Informe um CPF válido.");
+		}
 
 		// simula aleatoriamente se o CPF é válido (pode votar) ou não
 		boolean canVote = random.nextBoolean();

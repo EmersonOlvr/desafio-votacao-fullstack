@@ -93,6 +93,9 @@ public class VoteService {
 	 * @throws ConflictException Caso o associado já tenha votado nesta pauta.
 	 */
 	private Vote vote(TopicVotingSession topicVotingSession, String cpf, boolean vote) {
+		// remove caracteres deixando apenas números
+		cpf = cpf.replaceAll("[^0-9]", "");
+		
 		if (this.repository.existsByTopicVotingSessionTopicUuidAndCpf(topicVotingSession.getTopic().getUuid(), cpf))
 			throw new ConflictException("O associado já votou nesta pauta. Só é permitido votar uma vez por pauta.");
 		
