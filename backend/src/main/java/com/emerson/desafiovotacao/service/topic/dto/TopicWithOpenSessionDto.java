@@ -4,13 +4,13 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record TopicWithOpenSessionDto(
-		UUID topicUuid,
-		String topicTitle,
-		String topicDescription,
+		UUID id,
+		String title,
+		String description,
 		Instant createdAt,
-		UUID sessionUuid,
-		Instant sessionStart,
-		Instant sessionEnd
+		UUID sessionId,
+		Instant sessionStartTime,
+		Instant sessionEndTime
 ) {
 
 }
