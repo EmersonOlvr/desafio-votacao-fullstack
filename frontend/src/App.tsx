@@ -11,22 +11,27 @@ import { SnackbarProvider } from 'notistack'
 import './App.css'
 import TopicListPage from './pages/TopicListPage'
 import { ModalProvider } from './context/ModalContext'
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import theme from './themes/theme';
 
 function App() {
     return (
         <>
-            <SnackbarProvider
-                maxSnack={3}
-                autoHideDuration={5000}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: "right",
-                }}
-            >
-                <ModalProvider>
-                    <TopicListPage />
-                </ModalProvider>
-            </SnackbarProvider>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <SnackbarProvider
+                    maxSnack={3}
+                    autoHideDuration={5000}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: "right",
+                    }}
+                >
+                    <ModalProvider>
+                        <TopicListPage />
+                    </ModalProvider>
+                </SnackbarProvider>
+            </ThemeProvider>
         </>
     )
 }
