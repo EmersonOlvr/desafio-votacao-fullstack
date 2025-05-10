@@ -1,3 +1,79 @@
+# Sistema de Sessões de Votação
+
+Este projeto é uma solução full-stack para iniciar e gerenciar sessões de votação em pautas específicas. Ele é composto por:
+
+- **Frontend**: React + TypeScript com Material UI.
+- **Backend**: Spring Boot (Java 21).
+- **Banco de Dados**: PostgreSQL.
+- **Containerização**: Docker + Docker Compose.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+### Frontend
+
+- React + TypeScript
+- Material UI
+- React Hook Form
+- Axios
+- Notistack para notificações
+
+### Backend
+
+- Java 21 + Spring Boot
+- Spring Security
+- Spring Data JPA
+- PostgreSQL
+- Swagger para documentação da API
+
+### Outros
+
+- Docker & Docker Compose
+
+---
+
+## 💡 Decisões de Arquitetura
+
+- **Separação clara de responsabilidades**: A estrutura em frontend e backend permite organização, manutenibilidade e escalabilidade.
+- **Spring Boot no backend**: Por ser uma escolha madura, produtiva e escalável para APIs RESTful, com fácil integração ao ecossistema Java.
+- **Docker**: Facilita o setup do ambiente, isolando dependências e garantindo consistência entre diferentes ambientes.
+- **React Hook Form**: Garante ótima performance e controle sobre formulários no frontend.
+- **Material UI**: Usado para consistência visual, responsividade e agilidade no desenvolvimento da interface com uma biblioteca rica em componentes e responsiva.
+
+---
+
+## ✅ Requisitos
+
+- Docker e Docker Compose instalados
+- Git instalado
+
+---
+
+## ⚙️ Como rodar o projeto
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/EmersonOlvr/desafio-votacao-fullstack.git
+cd desafio-votacao-fullstack
+```
+
+### 2. Rode o projeto com Docker Compose
+
+```bash
+docker compose up --build
+```
+
+### 3. Acesse as aplicações
+
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend (API): [http://localhost:8085](http://localhost:8085)
+- Swagger UI (Documentação da API): [http://localhost:8085/swagger-ui/index.html](http://localhost:8085/swagger-ui/index.html)
+
+---
+
+
 # Votação
 
 ## Objetivo
